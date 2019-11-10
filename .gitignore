@@ -1,7 +1,7 @@
 node_modules
-crawledData
+crawledData/*
 sal.html
-!crawledData/.gitkeep
-!crawledData/pornstars_1570554586565.json
-!crawledData/pornstars_1570475580347.json
-!crawledData/pornstars_1570474815976.json
+!/crawledData/.gitkeep
+!/crawledData/pornstars_1570554586565.json
+!/crawledData/pornstars_1570475580347.json
+!/crawledData/pornstars_1570474815976.json
