@@ -8,11 +8,13 @@ Ever wondered why pornhub's age filter never worked? Well, I've made it work. So
 3. Explore `./crawledData` and browse your spicy data at will with your favorite JSON viewer
 
 Default values for the CLI parameters
+
 | Amount of pornstars | Gender | Skip pornstars without age |
 |:-:|:-:|:-:|
 | 1000 | female | true |
 
 Types for the CLI parameters
+
 | Amount of pornstars | Gender | Skip pornstars without age |
 |:-:|:-:|:-:|
 | Number | String in ["male", "female", "m2f", "f2m"] | Boolean |
