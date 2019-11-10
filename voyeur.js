@@ -1,28 +1,29 @@
-const fetch = require("node-fetch")
-const { JSDOM } = require("jsdom");
-
-const logger = msg => {
-    console.log(msg)
-}
-
 (async() => {
     try{
-            // Config
+            // Requires
+        const fetch = require("node-fetch")
+        const { JSDOM } = require("jsdom");
+
+            // Utils
+        const logger = msg => {
+            console.log(msg)
+        }
         const numCrawledPornstars = process.argv[2] || 1000
-        const skipPornstarsWithoutAge = false
+        const gender = process.argv[3] || "female"
+        const skipPornstarsWithoutAge = process.argv[4] || false
 
             // Useful Information
         const pornstars = []
         const pornstarUrls = []
 
             // Let's go        
-        let crtPage = 1
-        let document = null
-        while(crtPage === 1 || pornstarUrls.length < numCrawledPornstars * 1.1) {
-            const url = `https://www.pornhub.com/pornstars?gender=female&page=${crtPage}`
+        let crtPage = 0
+        while(++crtPage === 1 || pornstarUrls.length < numCrawledPornstars * 1.1) { // We take a little extra just to make sure we'll have enough in the end, after filtering some of them
+            const url = `https://www.pornhub.com/pornstars?gender=${gender}&page=${crtPage}`
             logger(`Now crawling ${url}...`)
+            
             const html = await (await fetch(url)).text()
-            document = (new JSDOM(html)).window.document
+            let document = (new JSDOM(html)).window.document
             if(!document.querySelector("#popularPornstars")) break // no more shit to crawl
             const listItems = document.querySelector("#popularPornstars").children
 
@@ -33,8 +34,7 @@ const logger = msg => {
                 const href = `https://www.pornhub.com${listItem.children[0].children[1].href}`
                 pornstarUrls.push(href)
             }
-            logger(`Number of pornstar urls: ${pornstarUrls.length}`)
-            logger(``)
+            logger(`Number of pornstar urls: ${pornstarUrls.length}\n`)
 
             if(listItems.length === 0) break // no more shit to crawl
             ++crtPage
@@ -43,7 +43,7 @@ const logger = msg => {
         for(let url of pornstarUrls) {
             try{
                 const html = await (await fetch(url)).text()
-                require("fs").writeFileSync("sal.html", html)
+                // require("fs").writeFileSync("sal.html", html)
                 document = (new JSDOM(html)).window.document
 
                 logger(url)
@@ -75,9 +75,13 @@ const logger = msg => {
         }
 
             // Finalisation
-        console.log(pornstars)
-        require("fs").writeFileSync(`./crawledData/pornstars_${new Date().getTime()}.json`, JSON.stringify({pornstars}, null, 4))
+        logger(pornstars)
+        const pornstarsObject = {
+            gender,
+            pornstars,
+        }
+        require("fs").writeFileSync(`./crawledData/pornstars_${new Date().getTime()}.json`, JSON.stringify(pornstarsObject, null, 4))
     } catch(e) {
-        console.log(e)
+        logger(e)
     }
 })()
